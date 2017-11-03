@@ -14,7 +14,7 @@ wkhtmltopdf.  The default is `0.12.3`.
 
 ## Testing
 
-    `docker run -it -v (pwd):/app/buildpack:ro heroku/buildpack-testrunner`
+    docker run -it -v (pwd):/app/buildpack:ro heroku/buildpack-testrunner
 
 ## License
 
