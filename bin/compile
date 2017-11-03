@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# bin/compile <build-dir> <cache-dir>
+
+set -e
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+
+BIN_PATH="$BUILD_DIR/bin"
+TMP_PATH="$BUILD_DIR/tmp"
+mkdir -p $CACHE_DIR $BIN_PATH $TMP_PATH
+
+[ -z "$WKHTMLTOPDF_VERSION" ] && WKHTMLTOPDF_VERSION="0.12.3"
+WKHTMLTOPDF_URL="https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/${WKHTMLTOPDF_VERSION}/wkhtmltox-${WKHTMLTOPDF_VERSION}_linux-generic-amd64.tar.xz"
+WKHTMLTOPDF_TAR="$CACHE_DIR/wkhtmltox.tar.xz"
+WKHTMLTOPDF_PATH="$TMP_PATH/wkhtmltox"
+WKHTMLTOPDF_SHARED_LIBS="$WKHTMLTOPDF_PATH/lib"
+WKHTMLTOPDF_BINARIES="$WKHTMLTOPDF_PATH/bin"
+
+BIN_DIR=$(cd $(dirname $0); pwd)
+
+if [ -f $WKHTMLTOPDF_TAR ]; then
+  echo "-----> Using wkhtmltopdf tar from cache"
+else
+  echo "-----> Downloading wkhtmltopdf tar"
+  curl -L $WKHTMLTOPDF_URL -o $WKHTMLTOPDF_TAR
+fi
+
+echo "-----> Unpacking tar"
+tar -xf $WKHTMLTOPDF_TAR -C $TMP_PATH
+
+echo "-----> Setting permissions"
+chmod +x $WKHTMLTOPDF_BINARIES/*
+
+echo "-----> Moving shared libs to bin dir"
+mv $WKHTMLTOPDF_SHARED_LIBS/* $BIN_PATH/
+
+echo "-----> Moving binaries to bin dir"
+mv $WKHTMLTOPDF_BINARIES/* $BIN_PATH/
+
+echo "-----> Cleaning up"
+rm -rf $WKHTMLTOPDF_PATH

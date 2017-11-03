@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+echo "wkhtmltox-buildpack"
+exit 0
